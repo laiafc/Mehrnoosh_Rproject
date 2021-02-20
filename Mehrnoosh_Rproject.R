@@ -60,6 +60,24 @@ nonzeromin <- function(data){
   }
 }
 
+
+#check the minimun non-zero of the whole dataset
+nonzerominwhole <- function(data){
+  if(is.data.frame(data)){
+    mins = vector(lenght=ncol(data))
+    for(i in 1:ncol(data)){
+      col=data[,i]
+      mins[i] = min(subset(col, col>0))
+    }
+    print(min(mins))
+  }
+  else
+    if(is.vector(data)){
+      print(min(subset(data, data>0)))
+    }
+}
+
+
 todomin <- subset(cleandata, select = grep("LFQ.intensity", names(cleandata)))
 nonzeromin(todomin)
 
