@@ -34,6 +34,8 @@ t159 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensit
 t163 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensity.163", names(cleandata))))
 
 
+names(t159)
+
 #5. Log2 transform LFQ intensity.
 
 #I decided to add +1 to every value to avoid -inf when going log2(0). As the minimum non-zero value of the
@@ -43,10 +45,10 @@ logt144 <- t144
 logt144[, 3:14] <- log2(t144[3:14]+1)
 
 logt159 <- t159
-logt159[, 3:14] <- log2(t159[3:11]+1)
+logt159[, 3:11] <- log2(t159[3:11]+1)
 
 logt163 <- t163
-logt163[, 3:14] <- log2(t163[3:11]+1)
+logt163[, 3:11] <- log2(t163[3:11]+1)
 
 
 
@@ -74,8 +76,6 @@ logt144$mean9 <- rowMeans(logt144[,c(12,13,14)])
 logt159$mean5 <- rowMeans(logt159[,c(3,4,5)])
 logt159$mean4 <- rowMeans(logt159[,c(6,7,8)])
 logt159$mean3 <- rowMeans(logt159[,c(9,10,11)])
-
-#There's 5a.1 etc WHAT TO DO?
 
 
 #for tissue 163
