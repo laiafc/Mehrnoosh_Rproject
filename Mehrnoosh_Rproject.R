@@ -3,6 +3,7 @@
 #Author: Laia Fernández Calvo
 
 library(R6)
+library(ggplot2)
 
 #Read in file
 proteinGroups <- read.delim("~/Documents/GitHub/Mehrnoosh_Rproject/proteinGroups.txt")
@@ -36,6 +37,10 @@ t163 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensit
 
 
 #5. Log2 transform LFQ intensity.
+
+#Zero values are missing ( the intensity doesn’t reach a threshold ) or they just didn’t exist. I would say if only one replicate is non-zero or all replicates were zero, it didn’t exist.
+
+
 
 #I decided to add +1 to every value to avoid -inf when going log2(0). As the minimum non-zero value of the
 #LFQ intensities is 211600 adding +1 will not greatly affect the log2.
@@ -190,7 +195,10 @@ logt163$p_adjust_ORF_IgG <- p.adjust(logt163$p_valORF_IgG , method = "BH")
 
 #10. Draw the volcano plot using -log10(adjusted p.value) on the y-axis and log2fold change on the x-axis.
 
-
+ggplot(data=logt159, aes(x=TvsN, y=-log10(p_adjust_T_N))) +
+  geom_point() + 
+  geom_vline(xintercept=c(-1, 1), col="red") +
+  geom_hline(yintercept=-log10(0.05), col="red")
 
 
 
