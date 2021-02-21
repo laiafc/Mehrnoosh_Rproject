@@ -2,7 +2,6 @@
 
 #Author: Laia Fernández Calvo
 
-library(R6)
 library(ggplot2)
 
 #Read in file
@@ -38,7 +37,65 @@ t163 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensit
 
 #5. Log2 transform LFQ intensity.
 
-#Zero values are missing ( the intensity doesn’t reach a threshold ) or they just didn’t exist. I would say if only one replicate is non-zero or all replicates were zero, it didn’t exist.
+#Zero values are missing ( the intensity doesn’t reach a threshold ) or they just didn’t exist. 
+
+#convert zero to NA 
+
+t144[t144 == 0] <- NA
+t159[t159 == 0] <- NA
+t163[t163 == 0] <- NA
+
+#If only one replicate is non-zero or all replicates were zero, it didn’t exist.
+#if within a condition, only one replicate is not NA - convert that to NA
+
+
+var0 <- c(3,4,7,6,3,9)
+var1 <- c(3,NA,NA,6,3,9)
+var2 <- c(3,NA,7,6,3,9)
+var3 <- c(NA,4,7,6,3,9)
+
+data <- data.frame(var0, var1, var2, var3)
+
+changetoNA <- function(x){
+  xt=t(x)
+  for (i in 1:nrow(x)){
+    NAcount=0
+    for(j in 1:3){
+      if(is.na(xt[j,i])) NAcount = NAcount+1
+    }
+    if(NAcount==2) {
+      for(j in 1:3){
+        xt[j,i]=NA
+      }
+    }
+  }
+  return(t(xt))
+}
+
+
+
+changetoNA(data[1:3])
+
+
+
+
+ttest <- function(x,y){
+  p_values=vector()
+  for(i in 1:nrow(x)){
+    try(
+      #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+      p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+    )
+  }
+  return(p_values)
+}
+
+nonzeromin <- function(data){
+  for(i in 1:ncol(data)){
+    col = data[,i]
+    print(min(subset(col, col>0)))
+  }
+}
 
 
 
