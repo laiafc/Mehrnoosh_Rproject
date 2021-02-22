@@ -224,8 +224,8 @@ volplot <- function(dataframe, x, y, title, label){
     geom_point(size = 1) + 
     geom_vline(xintercept=c(-1, 1), col="blue") +
     geom_hline(yintercept=-log10(0.05), col="green")+
-    #ylim(-1,4)+
-    #xlim(-7,10)+
+    ylim(-1,4)+
+    xlim(-7,10)+
     xlab("log2fold") +
     ylab("-log10(adj. p.value)") +
     ggtitle(title) +
@@ -287,7 +287,6 @@ volplot(logt163, logt163$TvsN, logt163$p_adjust_T_N, "tissue 163 Tumor vs Normal
 
 volplot(logt144, logt144$cond_9_10, logt144$p_adjust_9_10, "tissue 144 ORF vs IgG (cond 9vs10)", logt144$diffexpres)
 volplot(logt144, logt144$cond_1_2, logt144$p_adjust_1_2, "tissue 144 ORF vs IgG (cond 1vs2)", logt144$diffexpres2)
-
 
 
 
