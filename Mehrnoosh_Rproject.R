@@ -203,8 +203,7 @@ ttest <- function(x,y){
       p_values[i] <- NA
     else
       try(
-        #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
-        p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+        p_values[i] <- t.test(t(x[i,]),t(y[i,]))$p.value
       )
   }
   return(p_values)
@@ -212,13 +211,6 @@ ttest <- function(x,y){
 }
 
 
-
-  
-# ttest2(logt144[1,6:8], logt144[1,9:11])
-# ttest2(logt144[39,3:5], logt144[39,12:14])
-# t.test(t(logt144[39,3:5]),t(logt144[39,12:14]), paired = TRUE)$p.value
-# print(all(is.na(t((logt144[1,6:8])) | all(is.na(t(logt144[1,9:11]))))))
-# print(all(is.na(t((logt144[39,3:5])) | all(is.na(t(logt144[39,12:14]))))))
 
 
 
@@ -265,6 +257,32 @@ logt163$p_adjust_ORF_IgG <- p.adjust(logt163$p_valORF_IgG , method = "BH")
 
 #10. Draw the volcano plot using -log10(adjusted p.value) on the y-axis and log2fold change on the x-axis.
 
+
+volplot <- function(dataframe, x, y, title){
+  ggplot(data=dataframe, aes(x=x, y=-log10(y))) +
+    theme_bw()+
+    geom_point(size = 1) + 
+    geom_vline(xintercept=c(-1, 1), col="blue") +
+    geom_hline(yintercept=-log10(0.05), col="green")+
+    ylim(-1,4)+
+    xlim(-7,10)+
+    xlab("log2fold") +
+    ylab("-log10(adj. p.value)") +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5, face="bold.italic", size=14),
+          axis.title.x = element_text(size=10),
+          axis.title.y = element_text(size=10),
+          axis.text.x = element_text(face="bold",size=10),
+          axis.text.y = element_text(face="bold", size=10), legend.position = "none")
+  
+}
+
+volplot(logt159, logt159$TvsN, logt159$p_adjust_T_N, "title")
+
+
+
+
+
 ggplot(data=logt159, aes(x=TvsN, y=-log10(p_adjust_T_N))) +
   theme_bw()+
   geom_point() + 
@@ -275,13 +293,28 @@ ggplot(data=logt159, aes(x=TvsN, y=-log10(p_adjust_T_N))) +
 
 ggplot(data=logt144, aes(x=p_val9_10, y=-log10(p_adjust_9_10))) +
   theme_bw()+
-  geom_point() + 
-  geom_vline(xintercept=c(-1, 1), col="red") +
-  geom_hline(yintercept=-log10(0.05), col="red")+
+  geom_point(size = 1) + 
+  geom_vline(xintercept=c(-1, 1), col="blue") +
+  geom_hline(yintercept=-log10(0.05), col="green")+
   ylim(-1,4)+
   xlim(-7,10)
 
 
+ggplot(data=logt159, aes(x=ORFvsIgG, y=-log10(p_adjust_ORF_IgG))) +
+  theme_bw()+
+  geom_point(size = 1) + 
+  geom_vline(xintercept=c(-1, 1), col="blue") +
+  geom_hline(yintercept=-log10(0.05), col="green")+
+  ylim(-1,4)+
+  xlim(-7,10)
+
+ggplot(data=logt163, aes(x=ORFvsIgG, y=-log10(p_adjust_ORF_IgG))) +
+  theme_bw()+
+  geom_point(size = 1) + 
+  geom_vline(xintercept=c(-1, 1), col="blue") +
+  geom_hline(yintercept=-log10(0.05), col="green")+
+  ylim(-1,4)+
+  xlim(-7,10)
 
 
 
