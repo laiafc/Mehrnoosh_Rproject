@@ -220,7 +220,8 @@ logt163$p_adjust_ORF_IgG <- p.adjust(logt163$p_valORF_IgG , method = "BH")
 
 
 volplot <- function(dataframe, x, y, title, label){
-  ggplot(data=dataframe, aes(x=x, y=-log10(y), col= label)) +
+  fn=paste(getwd(),"/",title,".png",sep="")
+  volcano_plot <- ggplot(data=dataframe, aes(x=x, y=-log10(y), col= label)) +
     theme_bw()+
     geom_point(size = 1) + 
     geom_vline(xintercept=c(-1, 1), col="blue") +
@@ -236,8 +237,8 @@ volplot <- function(dataframe, x, y, title, label){
           axis.text.x = element_text(face="bold",size=10),
           axis.text.y = element_text(face="bold", size=10), 
           legend.position = "right")+
-   scale_color_manual(values=c("downregulated" = "blue", "non_signif." = "grey", "upregulated" = "red"))
-    
+    scale_color_manual(values=c("downregulated" = "blue", "non_signif." = "grey", "upregulated" = "red"))
+  ggsave(fn, plot=volcano_plot)
 }
 
 
@@ -281,15 +282,14 @@ logt163$diffexpres2[logt163$TvsN < -1 & logt163$p_adjust_T_N < 0.05] <- "downreg
 ##
 #Volcano plots
 ##
+volplot(logt159, logt159$ORFvsIgG, logt159$p_adjust_ORF_IgG, "tissue_159_ORF_vs_IgG", logt159$diffexpres)
+volplot(logt159, logt159$TvsN, logt159$p_adjust_T_N, "tissue_159_Tumor_vs_Normal_(ORF)", logt159$diffexpres2)
 
-volplot(logt159, logt159$ORFvsIgG, logt159$p_adjust_ORF_IgG, "tissue 159 ORF vs IgG", logt159$diffexpres)
-volplot(logt159, logt159$TvsN, logt159$p_adjust_T_N, "tissue 159 Tumor vs Normal (ORF)", logt159$diffexpres2)
+volplot(logt163, logt163$ORFvsIgG, logt163$p_adjust_ORF_IgG, "tissue_163_ORF_vs_IgG", logt163$diffexpres)
+volplot(logt163, logt163$TvsN, logt163$p_adjust_T_N, "tissue_163_Tumor_vs_Normal_(ORF)", logt163$diffexpres2)
 
-volplot(logt163, logt163$ORFvsIgG, logt163$p_adjust_ORF_IgG, "tissue 163 ORF vs IgG", logt163$diffexpres)
-volplot(logt163, logt163$TvsN, logt163$p_adjust_T_N, "tissue 163 Tumor vs Normal (ORF)", logt163$diffexpres2)
-
-volplot(logt144, logt144$cond_9_10, logt144$p_adjust_9_10, "tissue 144 ORF vs IgG (cond 9vs10)", logt144$diffexpres)
-volplot(logt144, logt144$cond_1_2, logt144$p_adjust_1_2, "tissue 144 ORF vs IgG (cond 1vs2)", logt144$diffexpres2)
+volplot(logt144, logt144$cond_9_10, logt144$p_adjust_9_10, "tissue_144_ORF_vs_IgG_(cond 9vs10)", logt144$diffexpres)
+volplot(logt144, logt144$cond_1_2, logt144$p_adjust_1_2, "tissue_144_ORF_vs_IgG_(cond 1vs2)", logt144$diffexpres2)
 
 
 
