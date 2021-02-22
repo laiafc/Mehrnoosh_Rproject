@@ -37,7 +37,7 @@ t163 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensit
 
 #5. Log2 transform LFQ intensity.
 
-#Zero values are missing ( the intensity doesn’t reach a threshold ) or they just didn’t exist. 
+#"Zero values are missing ( the intensity doesn’t reach a threshold ) or they just didn’t exist." 
 
 #convert zero to NA 
 
@@ -45,16 +45,11 @@ t144[t144 == 0] <- NA
 t159[t159 == 0] <- NA
 t163[t163 == 0] <- NA
 
-#If only one replicate is non-zero or all replicates were zero, it didn’t exist.
+#"If only one replicate is non-zero or all replicates were zero, it didn’t exist."
+
 #if within a condition, only one replicate is not NA - convert that to NA
 
 
-var0 <- c(3,4,7,6,3,9)
-var1 <- c(3,NA,NA,6,3,9)
-var2 <- c(3,NA,7,6,3,9)
-var3 <- c(NA,4,7,6,3,9)
-
-data <- data.frame(var0, var1, var2, var3)
 
 changetoNA <- function(x){
   xt=t(x)
@@ -74,28 +69,21 @@ changetoNA <- function(x){
 
 
 
-changetoNA(data[1:3])
+t144[3:5] <- changetoNA(t144[3:5])
+t144[6:8] <- changetoNA(t144[6:8])
+t144[9:11] <- changetoNA(t144[9:11])
+t144[12:14] <- changetoNA(t144[12:14])
 
 
+t159[3:5] <- changetoNA(t159[3:5])
+t159[6:8] <- changetoNA(t159[6:8])
+t159[9:11] <- changetoNA(t159[9:11])
 
 
-ttest <- function(x,y){
-  p_values=vector()
-  for(i in 1:nrow(x)){
-    try(
-      #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
-      p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
-    )
-  }
-  return(p_values)
-}
+t163[3:5] <- changetoNA(t163[3:5])
+t163[6:8] <- changetoNA(t163[6:8])
+t163[9:11] <- changetoNA(t163[9:11])
 
-nonzeromin <- function(data){
-  for(i in 1:ncol(data)){
-    col = data[,i]
-    print(min(subset(col, col>0)))
-  }
-}
 
 
 
@@ -103,66 +91,65 @@ nonzeromin <- function(data){
 #LFQ intensities is 211600 adding +1 will not greatly affect the log2.
 
 logt144 <- t144
-logt144[, 3:14] <- log2(t144[3:14]+1)
+logt144[, 3:14] <- log2(t144[3:14])
 
 logt159 <- t159
-logt159[, 3:11] <- log2(t159[3:11]+1)
+logt159[, 3:11] <- log2(t159[3:11])
 
 logt163 <- t163
-logt163[, 3:11] <- log2(t163[3:11]+1)
+logt163[, 3:11] <- log2(t163[3:11])
 
 
 
-
-#chech the minimum non-zero of every numerical column
-nonzeromin <- function(data){
-  for(i in 1:ncol(data)){
-    col = data[,i]
-    print(min(subset(col, col>0)))
-  }
-}
-
-
-#check the minimun non-zero of the whole dataset
-nonzerominwhole <- function(data){
-  if(is.data.frame(data)){
-    mins = vector(lenght=ncol(data))
-    for(i in 1:ncol(data)){
-      col=data[,i]
-      mins[i] = min(subset(col, col>0))
-    }
-    print(min(mins))
-  }
-  else
-    if(is.vector(data)){
-      print(min(subset(data, data>0)))
-    }
-}
-
-
-todomin <- subset(cleandata, select = grep("LFQ.intensity", names(cleandata)))
-nonzeromin(todomin)
+# #chech the minimum non-zero of every numerical column
+# nonzeromin <- function(data){
+#   for(i in 1:ncol(data)){
+#     col = data[,i]
+#     print(min(subset(col, col>0)))
+#   }
+# }
+# 
+# 
+# #check the minimun non-zero of the whole dataset
+# nonzerominwhole <- function(data){
+#   if(is.data.frame(data)){
+#     mins = vector(lenght=ncol(data))
+#     for(i in 1:ncol(data)){
+#       col=data[,i]
+#       mins[i] = min(subset(col, col>0))
+#     }
+#     print(min(mins))
+#   }
+#   else
+#     if(is.vector(data)){
+#       print(min(subset(data, data>0)))
+#     }
+# }
+# 
+# 
+# todomin <- subset(cleandata, select = grep("LFQ.intensity", names(cleandata)))
+# nonzeromin(todomin)
 
 
 
 #6. Calculate the average log2 LFQ intensities in each condition.
 
 #for tissue 144
-logt144$mean10 <- rowMeans(logt144[,c(3,4,5)])
-logt144$mean2 <- rowMeans(logt144[,c(6,7,8)])
-logt144$mean1 <- rowMeans(logt144[,c(9,10,11)])
-logt144$mean9 <- rowMeans(logt144[,c(12,13,14)])
+logt144$mean10 <- rowMeans(logt144[,c(3,4,5)], na.rm = TRUE)
+logt144$mean2 <- rowMeans(logt144[,c(6,7,8)], na.rm = TRUE)
+logt144$mean1 <- rowMeans(logt144[,c(9,10,11)], na.rm = TRUE)
+logt144$mean9 <- rowMeans(logt144[,c(12,13,14)], na.rm = TRUE)
 
 #for tissue 159
-logt159$mean5 <- rowMeans(logt159[,c(3,4,5)])
-logt159$mean4 <- rowMeans(logt159[,c(6,7,8)])
-logt159$mean3 <- rowMeans(logt159[,c(9,10,11)])
+logt159$mean5 <- rowMeans(logt159[,c(3,4,5)], na.rm = TRUE)
+logt159$mean4 <- rowMeans(logt159[,c(6,7,8)], na.rm = TRUE)
+logt159$mean3 <- rowMeans(logt159[,c(9,10,11)], na.rm = TRUE)
 
 
 #for tissue 163
-logt163$mean8 <- rowMeans(logt163[,c(3,4,5)])
-logt163$mean7 <- rowMeans(logt163[,c(6,7,8)])
-logt163$mean6 <- rowMeans(logt163[,c(9,10,11)])
+logt163$mean8 <- rowMeans(logt163[,c(3,4,5)], na.rm = TRUE)
+logt163$mean7 <- rowMeans(logt163[,c(6,7,8)], na.rm = TRUE)
+logt163$mean6 <- rowMeans(logt163[,c(9,10,11)], na.rm = TRUE)
 
 
 
@@ -181,8 +168,8 @@ logt163$mean6 <- rowMeans(logt163[,c(9,10,11)])
 
 
 #for tissue 144
-logt144$cond9vs10<- logt144$mean9 - logt144$mean10
-logt144$cond1vs2<- logt144$mean1 - logt144$mean2
+logt144$cond_9_10<- logt144$mean9 - logt144$mean10
+logt144$cond_1_2<- logt144$mean1 - logt144$mean2
 
 #for tissue 159
 logt159$TvsN<- logt159$mean3 - logt159$mean5
@@ -197,16 +184,42 @@ logt163$ORFvsIgG<- logt163$mean6 - logt163$mean7
 #8. Perform t.test() between every records in case and control and extract the p.value from it.
 #You can use try() to continue your calculation whenever not enough replicates exist.
 
+# ttest <- function(x,y){
+#   p_values=vector()
+#   for(i in 1:nrow(x)){
+#     try(
+#       #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+#       p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+#     )
+#   }
+#   return(p_values)
+# }
+
+
 ttest <- function(x,y){
   p_values=vector()
   for(i in 1:nrow(x)){
-    try(
-      #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
-      p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
-    )
+    if (all(is.na(t(x[i,])) | all(is.na(t(y[i,])))))
+      p_values[i] <- NA
+    else
+      try(
+        #p_val[1,i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+        p_values[i] <- t.test(t(x[i,]),t(y[i,]), paired = TRUE)$p.value
+      )
   }
   return(p_values)
+
 }
+
+
+
+  
+# ttest2(logt144[1,6:8], logt144[1,9:11])
+# ttest2(logt144[39,3:5], logt144[39,12:14])
+# t.test(t(logt144[39,3:5]),t(logt144[39,12:14]), paired = TRUE)$p.value
+# print(all(is.na(t((logt144[1,6:8])) | all(is.na(t(logt144[1,9:11]))))))
+# print(all(is.na(t((logt144[39,3:5])) | all(is.na(t(logt144[39,12:14]))))))
+
 
 
 #for tissue 144
@@ -253,12 +266,20 @@ logt163$p_adjust_ORF_IgG <- p.adjust(logt163$p_valORF_IgG , method = "BH")
 #10. Draw the volcano plot using -log10(adjusted p.value) on the y-axis and log2fold change on the x-axis.
 
 ggplot(data=logt159, aes(x=TvsN, y=-log10(p_adjust_T_N))) +
+  theme_bw()+
   geom_point() + 
   geom_vline(xintercept=c(-1, 1), col="red") +
-  geom_hline(yintercept=-log10(0.05), col="red")
+  geom_hline(yintercept=-log10(0.05), col="red")+
+  ylim(-1,4)
 
 
-
+ggplot(data=logt144, aes(x=p_val9_10, y=-log10(p_adjust_9_10))) +
+  theme_bw()+
+  geom_point() + 
+  geom_vline(xintercept=c(-1, 1), col="red") +
+  geom_hline(yintercept=-log10(0.05), col="red")+
+  ylim(-1,4)+
+  xlim(-7,10)
 
 
 
