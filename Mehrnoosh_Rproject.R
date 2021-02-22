@@ -3,7 +3,6 @@
 #Author: Laia Fernández Calvo
 
 library(ggplot2)
-library(ggrepel)
 
 
 #Read in file
@@ -24,6 +23,7 @@ cleandata <- subset(proteinGroups, Reverse != "+")
 cleandata <- subset(proteinGroups, Potential.contaminant != "+")
 
 
+
 ####
 #4. Separate different tissue LFQ intensity columns. Don’t forget to include gene.name and protein IDs.
 #There are three different tissues [144/159/163], they could be either tumor or normal [T/N].
@@ -38,6 +38,7 @@ cleandata <- subset(proteinGroups, Potential.contaminant != "+")
 t144 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensity.144", names(cleandata))))
 t159 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensity.159", names(cleandata))))
 t163 <- subset(cleandata, select = c(Protein.IDs, Gene.names, grep("LFQ.intensity.163", names(cleandata))))
+
 
 
 ####
@@ -171,7 +172,6 @@ ttest <- function(x,y){
 }
 
 
-
 #for tissue 144
 # 144T_ORF1 vs. 144T_IgG
 logt144$p_val9_10 <- ttest(logt144[,3:5], logt144[,12:14])
@@ -185,6 +185,7 @@ logt159$p_valORF_IgG <- ttest(logt159[,3:5], logt159[,6:8])
 #for tissue 163
 logt163$p_valT_N <- ttest(logt163[,3:5], logt163[,12:14])
 logt163$p_valORF_IgG <- ttest(logt163[,6:8], logt163[,12:14])
+
 
 
 ####
@@ -240,7 +241,7 @@ volplot <- function(dataframe, x, y, title, label){
 }
 
 
-#Addig labels
+#Adding labels
 
 #tissue 159
 # add column of for expression
@@ -277,7 +278,9 @@ logt163$diffexpres2[logt163$TvsN > 1 & logt163$p_adjust_T_N < 0.05] <- "upregula
 logt163$diffexpres2[logt163$TvsN < -1 & logt163$p_adjust_T_N < 0.05] <- "downregulated"
 
 
+##
 #Volcano plots
+##
 
 volplot(logt159, logt159$ORFvsIgG, logt159$p_adjust_ORF_IgG, "tissue 159 ORF vs IgG", logt159$diffexpres)
 volplot(logt159, logt159$TvsN, logt159$p_adjust_T_N, "tissue 159 Tumor vs Normal (ORF)", logt159$diffexpres2)
@@ -287,7 +290,6 @@ volplot(logt163, logt163$TvsN, logt163$p_adjust_T_N, "tissue 163 Tumor vs Normal
 
 volplot(logt144, logt144$cond_9_10, logt144$p_adjust_9_10, "tissue 144 ORF vs IgG (cond 9vs10)", logt144$diffexpres)
 volplot(logt144, logt144$cond_1_2, logt144$p_adjust_1_2, "tissue 144 ORF vs IgG (cond 1vs2)", logt144$diffexpres2)
-
 
 
 
